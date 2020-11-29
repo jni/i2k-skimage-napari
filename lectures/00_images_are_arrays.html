@@ -47,6 +47,8 @@
     <script src="../_static/sphinx-book-theme.d31b09fe5c1d09cb49b26a786de4a05d.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.18.0/dist/embed-amd.js"></script>
     <script async="async" src="https://unpkg.com/thebelab@latest/lib/index.js"></script>
     <script >
         const thebe_selector = ".thebe"
@@ -263,15 +265,7 @@
         
               <div>
                 
-  <div style='font-size: 200%; line-height: 2;'>
-To participate, you'll need to git clone (or download the .zip from GitHub):
-<p>https://github.com/scikit-image/skimage-tutorials</p>
-</div>
-<p>You can do that in git using:</p>
-<pre>git clone --depth=1 https://github.com/scikit-image/skimage-tutorials</pre>
-<div style='font-size: 200%; line-height: 1.5;'>
-If you have already cloned the material, please issue `git pull` now and reload the notebook to ensure that you have the latest updates.
-</div><div class="cell tag_remove-input tag_remove-output docutils container">
+  <div class="cell tag_remove-input tag_remove-output docutils container">
 </div>
 <div class="section" id="images-are-numpy-arrays">
 <h1>Images are numpy arrays<a class="headerlink" href="#images-are-numpy-arrays" title="Permalink to this headline">¶</a></h1>
@@ -290,7 +284,7 @@ If you have already cloned the material, please issue `git pull` now and reload 
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/00_images_are_arrays_4_0.png" src="../_images/00_images_are_arrays_4_0.png" />
+<img alt="../_images/00_images_are_arrays_3_0.png" src="../_images/00_images_are_arrays_3_0.png" />
 </div>
 </div>
 <p>The same holds for “real-world” images:</p>
@@ -314,7 +308,7 @@ dtype: uint8
 shape: (303, 384)
 </pre></div>
 </div>
-<img alt="../_images/00_images_are_arrays_6_1.png" src="../_images/00_images_are_arrays_6_1.png" />
+<img alt="../_images/00_images_are_arrays_5_1.png" src="../_images/00_images_are_arrays_5_1.png" />
 </div>
 </div>
 <p>A color image is a 3D array, where the last dimension has size 3 and represents the red, green, and blue channels:</p>
@@ -333,7 +327,7 @@ shape: (303, 384)
 Values min/max: 0 231
 </pre></div>
 </div>
-<img alt="../_images/00_images_are_arrays_8_1.png" src="../_images/00_images_are_arrays_8_1.png" />
+<img alt="../_images/00_images_are_arrays_7_1.png" src="../_images/00_images_are_arrays_7_1.png" />
 </div>
 </div>
 <p>These are <em>just NumPy arrays</em>. E.g., we can make a red square by using standard array slicing and manipulation:</p>
@@ -345,7 +339,7 @@ Values min/max: 0 231
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/00_images_are_arrays_10_0.png" src="../_images/00_images_are_arrays_10_0.png" />
+<img alt="../_images/00_images_are_arrays_9_0.png" src="../_images/00_images_are_arrays_9_0.png" />
 </div>
 </div>
 <p>Images can also include transparent regions by adding a 4th dimension, called an <em>alpha layer</em>.</p>
@@ -407,7 +401,7 @@ Values min/max: 0 231
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/00_images_are_arrays_15_0.png" src="../_images/00_images_are_arrays_15_0.png" />
+<img alt="../_images/00_images_are_arrays_14_0.png" src="../_images/00_images_are_arrays_14_0.png" />
 </div>
 </div>
 <p>For more on plotting, see the <a class="reference external" href="https://matplotlib.org/gallery/index.html#images-contours-and-fields">Matplotlib documentation</a> and <a class="reference external" href="https://matplotlib.org/api/pyplot_summary.html">pyplot API</a>.</p>
@@ -441,7 +435,7 @@ data-type of the array.</p>
 Linear1: uint8 0 255
 </pre></div>
 </div>
-<img alt="../_images/00_images_are_arrays_18_1.png" src="../_images/00_images_are_arrays_18_1.png" />
+<img alt="../_images/00_images_are_arrays_17_1.png" src="../_images/00_images_are_arrays_17_1.png" />
 </div>
 </div>
 <p>The library is designed in such a way that any data-type is allowed as input,
@@ -502,65 +496,13 @@ type, min, max: float64 0.0 0.9058823529411765
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">FileNotFoundError</span><span class="g g-Whitespace">                         </span>Traceback (most recent call last)
-<span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">10</span><span class="o">-</span><span class="mi">35681</span><span class="n">dfa1cd0</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="n">io</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> 
-<span class="ne">----&gt; </span><span class="mi">3</span> <span class="n">image</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="s1">&#39;../images/balloon.jpg&#39;</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">4</span> 
-<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">image</span><span class="p">))</span>
-
-<span class="nn">~/projects/scikit-image/skimage/io/_io.py</span> in <span class="ni">imread</span><span class="nt">(fname, as_gray, plugin, **plugin_args)</span>
-<span class="g g-Whitespace">     </span><span class="mi">46</span> 
-<span class="g g-Whitespace">     </span><span class="mi">47</span>     <span class="k">with</span> <span class="n">file_or_url_context</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span> <span class="k">as</span> <span class="n">fname</span><span class="p">:</span>
-<span class="ne">---&gt; </span><span class="mi">48</span>         <span class="n">img</span> <span class="o">=</span> <span class="n">call_plugin</span><span class="p">(</span><span class="s1">&#39;imread&#39;</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">plugin</span><span class="o">=</span><span class="n">plugin</span><span class="p">,</span> <span class="o">**</span><span class="n">plugin_args</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">49</span> 
-<span class="g g-Whitespace">     </span><span class="mi">50</span>     <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="s1">&#39;ndim&#39;</span><span class="p">):</span>
-
-<span class="nn">~/projects/scikit-image/skimage/io/manage_plugins.py</span> in <span class="ni">call_plugin</span><span class="nt">(kind, *args, **kwargs)</span>
-<span class="g g-Whitespace">    </span><span class="mi">205</span>                                <span class="p">(</span><span class="n">plugin</span><span class="p">,</span> <span class="n">kind</span><span class="p">))</span>
-<span class="g g-Whitespace">    </span><span class="mi">206</span> 
-<span class="ne">--&gt; </span><span class="mi">207</span>     <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">208</span> 
-<span class="g g-Whitespace">    </span><span class="mi">209</span> 
-
-<span class="nn">~/projects/scikit-image/skimage/io/_plugins/imageio_plugin.py</span> in <span class="ni">imread</span><span class="nt">(*args, **kwargs)</span>
-<span class="g g-Whitespace">      </span><span class="mi">8</span> <span class="nd">@wraps</span><span class="p">(</span><span class="n">imageio_imread</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">9</span> <span class="k">def</span> <span class="nf">imread</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="ne">---&gt; </span><span class="mi">10</span>     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">imageio_imread</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
-
-<span class="nn">~/conda/envs/all/lib/python3.8/site-packages/imageio/core/functions.py</span> in <span class="ni">imread</span><span class="nt">(uri, format, **kwargs)</span>
-<span class="g g-Whitespace">    </span><span class="mi">263</span> 
-<span class="g g-Whitespace">    </span><span class="mi">264</span>     <span class="c1"># Get reader and read first</span>
-<span class="ne">--&gt; </span><span class="mi">265</span>     <span class="n">reader</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="nb">format</span><span class="p">,</span> <span class="s2">&quot;i&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">266</span>     <span class="k">with</span> <span class="n">reader</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">267</span>         <span class="k">return</span> <span class="n">reader</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-
-<span class="nn">~/conda/envs/all/lib/python3.8/site-packages/imageio/core/functions.py</span> in <span class="ni">get_reader</span><span class="nt">(uri, format, mode, **kwargs)</span>
-<span class="g g-Whitespace">    </span><span class="mi">170</span> 
-<span class="g g-Whitespace">    </span><span class="mi">171</span>     <span class="c1"># Create request object</span>
-<span class="ne">--&gt; </span><span class="mi">172</span>     <span class="n">request</span> <span class="o">=</span> <span class="n">Request</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span> <span class="o">+</span> <span class="n">mode</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">173</span> 
-<span class="g g-Whitespace">    </span><span class="mi">174</span>     <span class="c1"># Get format</span>
-
-<span class="nn">~/conda/envs/all/lib/python3.8/site-packages/imageio/core/request.py</span> in <span class="ni">__init__</span><span class="nt">(self, uri, mode, **kwargs)</span>
-<span class="g g-Whitespace">    </span><span class="mi">119</span> 
-<span class="g g-Whitespace">    </span><span class="mi">120</span>         <span class="c1"># Parse what was given</span>
-<span class="ne">--&gt; </span><span class="mi">121</span>         <span class="bp">self</span><span class="o">.</span><span class="n">_parse_uri</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">122</span> 
-<span class="g g-Whitespace">    </span><span class="mi">123</span>         <span class="c1"># Set extension</span>
-
-<span class="nn">~/conda/envs/all/lib/python3.8/site-packages/imageio/core/request.py</span> in <span class="ni">_parse_uri</span><span class="nt">(self, uri)</span>
-<span class="g g-Whitespace">    </span><span class="mi">255</span>                 <span class="c1"># Reading: check that the file exists (but is allowed a dir)</span>
-<span class="g g-Whitespace">    </span><span class="mi">256</span>                 <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fn</span><span class="p">):</span>
-<span class="ne">--&gt; </span><span class="mi">257</span>                     <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="s2">&quot;No such file: &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span> <span class="o">%</span> <span class="n">fn</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">258</span>             <span class="k">else</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">259</span>                 <span class="c1"># Writing: check that the directory to write to does exist</span>
-
-<span class="ne">FileNotFoundError</span>: No such file: &#39;/Users/jni/projects/i2k-skimage-napari/images/balloon.jpg&#39;
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;class &#39;numpy.ndarray&#39;&gt;
+uint8
+(300, 225, 3)
+0 255
 </pre></div>
 </div>
+<img alt="../_images/00_images_are_arrays_23_1.png" src="../_images/00_images_are_arrays_23_1.png" />
 </div>
 </div>
 <p>We also have the ability to load multiple images, or multi-layer TIFF images:</p>
@@ -571,6 +513,39 @@ type, min, max: float64 0.0 0.9058823529411765
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Type:&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">ic</span><span class="p">))</span>
 
 <span class="n">ic</span><span class="o">.</span><span class="n">files</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Type: &lt;class &#39;skimage.io.collection.ImageCollection&#39;&gt;
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&#39;../images/Bells-Beach.jpg&#39;,
+ &#39;../images/balloon.jpg&#39;,
+ &#39;../images/bubbles.jpg&#39;,
+ &#39;../images/chapel_floor.png&#39;,
+ &#39;../images/chromosomes.jpg&#39;,
+ &#39;../images/clock_motion.png&#39;,
+ &#39;../images/color-wheel.jpg&#39;,
+ &#39;../images/credit_card.jpg&#39;,
+ &#39;../images/cycle_spin.png&#39;,
+ &#39;../images/fingers.png&#39;,
+ &#39;../images/forest.jpg&#39;,
+ &#39;../images/greenscreen.jpg&#39;,
+ &#39;../images/hand-coin.jpg&#39;,
+ &#39;../images/logo.png&#39;,
+ &#39;../images/microarray.jpg&#39;,
+ &#39;../images/mm.jpg&#39;,
+ &#39;../images/mona_lisa.jpg&#39;,
+ &#39;../images/mpl_hist.png&#39;,
+ &#39;../images/round_pill.jpg&#39;,
+ &#39;../images/snakes.png&#39;,
+ &#39;../images/spice_1.jpg&#39;,
+ &#39;../images/spices.jpg&#39;,
+ &#39;../images/stefan.jpg&#39;,
+ &#39;../images/superprom_prev.jpg&#39;,
+ &#39;../images/zebrafish-spinal-cord-color.png&#39;,
+ &#39;../images/zebrafish-spinal-cord.png&#39;]
 </pre></div>
 </div>
 </div>
@@ -596,6 +571,9 @@ type, min, max: float64 0.0 0.9058823529411765
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<img alt="../_images/00_images_are_arrays_26_0.png" src="../_images/00_images_are_arrays_26_0.png" />
+</div>
 </div>
 <div class="section" id="aside-enumerate">
 <h3>Aside: <code class="docutils literal notranslate"><span class="pre">enumerate</span></code><a class="headerlink" href="#aside-enumerate" title="Permalink to this headline">¶</a></h3>
@@ -611,6 +589,13 @@ type, min, max: float64 0.0 0.9058823529411765
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">animal</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">animals</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The animal in position </span><span class="si">{}</span><span class="s1"> is </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">animal</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The animal in position 0 is cat
+The animal in position 1 is dog
+The animal in position 2 is leopard
 </pre></div>
 </div>
 </div>
@@ -710,6 +695,17 @@ type, min, max: float64 0.0 0.9058823529411765
     <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;ipython-input-18-4feb18b15cc3&gt;:7: FutureWarning: `draw.circle` is deprecated in favor of `draw.disk`.`draw.circle` will be removed in version 0.19
+  r, c = draw.circle(100, 100, 100)
+&lt;ipython-input-18-4feb18b15cc3&gt;:10: FutureWarning: `draw.circle` is deprecated in favor of `draw.disk`.`draw.circle` will be removed in version 0.19
+  r, c = draw.circle(100, 200, 100)
+&lt;ipython-input-18-4feb18b15cc3&gt;:13: FutureWarning: `draw.circle` is deprecated in favor of `draw.disk`.`draw.circle` will be removed in version 0.19
+  r, c = draw.circle(200, 150, 100)
+</pre></div>
+</div>
+<img alt="../_images/00_images_are_arrays_37_1.png" src="../_images/00_images_are_arrays_37_1.png" />
 </div>
 </div>
 </div>
