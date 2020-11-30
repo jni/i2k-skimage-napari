@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>I2K 2020: Bioimage analysis fundamentals &#8212; Bioimage analysis fundamentals in Python</title>
+    <title>discussion &#8212; Bioimage analysis fundamentals in Python</title>
     
   <link rel="stylesheet" href="../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -59,7 +59,6 @@
     <script async="async" src="../_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Image filtering" href="1_image_filters.html" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
@@ -90,8 +89,8 @@
 </form>
 <nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
     <ul class="nav sidenav_l1">
- <li class="toctree-l1 current active">
-  <a class="reference internal" href="#">
+ <li class="toctree-l1">
+  <a class="reference internal" href="0_i2k_bioimage_analysis_fundamentals.html">
    I2K 2020: Bioimage analysis fundamentals
   </a>
  </li>
@@ -152,7 +151,7 @@
         <!-- ipynb file if we had a myst markdown file -->
         
         <!-- Download raw file -->
-        <a class="dropdown-buttons" href="../_sources/lectures/0_i2k_bioimage_analysis_fundamentals.ipynb"><button type="button"
+        <a class="dropdown-buttons" href="../_sources/lectures/4_discussion_session_1.ipynb"><button type="button"
                 class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
                 data-placement="left">.ipynb</button></a>
         <!-- Download PDF via print -->
@@ -177,7 +176,7 @@
         aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
     <div class="dropdown-buttons">
         
-        <a class="binder-button" href="https://mybinder.org/v2/gh/executablebooks/jupyter-book/master?urlpath=tree/lectures/0_i2k_bioimage_analysis_fundamentals.ipynb"><button type="button"
+        <a class="binder-button" href="https://mybinder.org/v2/gh/executablebooks/jupyter-book/master?urlpath=tree/lectures/4_discussion_session_1.ipynb"><button type="button"
                 class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
                 data-placement="left"><img class="binder-button-logo"
                     src="../_static/images/logo_binder.svg"
@@ -194,27 +193,6 @@
     <!-- Table of contents -->
     <div class="d-none d-md-block col-md-2 bd-toc show">
         
-        <div class="tocsection onthispage pt-5 pb-3">
-            <i class="fas fa-list"></i> Contents
-        </div>
-        <nav id="bd-toc-nav">
-            <ul class="nav section-nav flex-column">
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#with-scikit-image-napari-friends">
-   with scikit-image, napari, &amp; friends
-  </a>
-  <ul class="nav section-nav flex-column">
-   <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#schedule">
-     schedule
-    </a>
-   </li>
-  </ul>
- </li>
-</ul>
-
-        </nav>
-        
     </div>
 </div>
     <div id="main-content" class="row">
@@ -222,26 +200,18 @@
         
               <div>
                 
-  <div class="section" id="i2k-2020-bioimage-analysis-fundamentals">
-<h1>I2K 2020: Bioimage analysis fundamentals<a class="headerlink" href="#i2k-2020-bioimage-analysis-fundamentals" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="with-scikit-image-napari-friends">
-<h2>with scikit-image, napari, &amp; friends<a class="headerlink" href="#with-scikit-image-napari-friends" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="schedule">
-<h3>schedule<a class="headerlink" href="#schedule" title="Permalink to this headline">¶</a></h3>
+  <div class="section" id="discussion">
+<h1>discussion<a class="headerlink" href="#discussion" title="Permalink to this headline">¶</a></h1>
+<p>We will use this time for some free discussion about napari, scikit-image, and scientific Python more generally. Possible topics:</p>
 <ul class="simple">
-<li><p>Intro: 10min</p></li>
-<li><p><a class="reference internal" href="1_image_filters.html"><span class="doc std std-doc">filtering from scratch</span></a>: 50min</p></li>
-<li><p>break: 15min</p></li>
-<li><p><a class="reference internal" href="2_segmentation_and_regionprops.html"><span class="doc std std-doc">interactive segmentation and regionprops</span></a>: 50min</p></li>
-<li><p>break: 30min</p></li>
-<li><p><a class="reference internal" href="3_dask.html"><span class="doc std std-doc">out-of-core processing and vis with dask</span></a>: 50min</p></li>
-<li><p>break: 15min</p></li>
-<li><p>discussion, Q&amp;A (<a class="reference internal" href="4_discussion_session_1.html"><span class="doc std std-doc">session 1</span></a>, <a class="reference internal" href="4_discussion_session_1.html"><span class="doc std std-doc">session 2</span></a>): 50min</p></li>
+<li><p>The napari <a class="reference external" href="https://github.com/napari/napari/pull/1906">0.4 roadmap</a></p></li>
+<li><p>building UIs with magicgui</p></li>
+<li><p>embedding matplotlib widgets and adding interactivity with matplotlib (e.g. <a class="reference external" href="https://twitter.com/jnuneziglesias/status/1286599143008346112">mass spec imaging</a> or <a class="reference external" href="https://github.com/jni/napariboard-proto">napariboard</a>)</p></li>
+<li><p>creating and using IO plugins</p></li>
+<li><p>next generation file formats and napari</p></li>
+<li><p>contributing to open source</p></li>
+<li><p>any issues you’ve had using skimage or napari with your own data</p></li>
 </ul>
-<div class="toctree-wrapper compound">
-</div>
-</div>
-</div>
 </div>
 
     <script type="text/x-thebe-config">
@@ -272,7 +242,6 @@
     
     <div class='prev-next-bottom'>
         
-    <a class='right-next' id="next-link" href="1_image_filters.html" title="next page">Image filtering</a>
 
     </div>
     <footer class="footer mt-5 mt-md-0">

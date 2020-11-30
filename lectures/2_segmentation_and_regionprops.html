@@ -113,11 +113,6 @@
    out-of-core image analysis with dask
   </a>
  </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="4_discussion.html">
-   discussion
-  </a>
- </li>
 </ul>
 
 </nav> <!-- To handle the deprecated key -->
@@ -234,30 +229,40 @@
   <a class="reference internal nav-link" href="#id1">
    Segmentation
   </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#span-style-color-cornflowerblue-exercise-improve-the-points-span">
+     <span style="color:cornflowerblue">
+      Exercise: improve the points
+     </span>
+    </a>
+   </li>
+  </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#making-measurements">
    Making measurements
   </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#challenge-problems">
-   Challenge problems
-  </a>
   <ul class="nav section-nav flex-column">
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#improve-the-segmentation">
-     Improve the segmentation
+    <a class="reference internal nav-link" href="#span-style-color-cornflowerblue-exercise-physical-measurements-span">
+     <span style="color:cornflowerblue">
+      Exercise: physical measurements
+     </span>
     </a>
    </li>
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#segment-cell-membranes">
-     Segment cell membranes
+    <a class="reference internal nav-link" href="#span-style-color-cornflowerblue-exercise-full-cell-segmentation-span">
+     <span style="color:cornflowerblue">
+      Exercise: full cell segmentation
+     </span>
     </a>
    </li>
    <li class="toc-h3 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#measure-the-area-in-m3-of-the-cells">
-     Measure the area in µm³ of the cells
+    <a class="reference internal nav-link" href="#span-style-color-cornflowerblue-exercise-displaying-regionprops-or-other-values-span">
+     <span style="color:cornflowerblue">
+      Exercise: displaying regionprops (or other values)
+     </span>
     </a>
    </li>
   </ul>
@@ -346,8 +351,11 @@
 <p>In the rest of this notebook, we will segment nuclei from a small sample image provided by the Allen Institute for Cell Science.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nuclei</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="s1">&#39;../images/cells.tif&#39;</span><span class="p">)</span>
-<span class="n">membranes</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="s1">&#39;../images/cells_membrane.tif&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tifffile</span>
+
+
+<span class="n">nuclei</span> <span class="o">=</span> <span class="n">tifffile</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="s1">&#39;../images/cells.tif&#39;</span><span class="p">)</span>
+<span class="n">membranes</span> <span class="o">=</span> <span class="n">tifffile</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="s1">&#39;../images/cells_membrane.tif&#39;</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;shape: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nuclei</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;dtype: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nuclei</span><span class="o">.</span><span class="n">dtype</span><span class="p">))</span>
@@ -388,7 +396,7 @@ range: (0.0, 1.0)
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">napari.utils.notebook_display</span> <span class="kn">import</span> <span class="n">nbscreenshot</span>
 
-<span class="n">viewer</span><span class="o">.</span><span class="n">ndisplay</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">viewer</span><span class="o">.</span><span class="n">dims</span><span class="o">.</span><span class="n">ndisplay</span> <span class="o">=</span> <span class="mi">3</span>
 <span class="n">viewer</span><span class="o">.</span><span class="n">camera</span><span class="o">.</span><span class="n">angles</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">30</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">120</span><span class="p">)</span>
 <span class="n">nbscreenshot</span><span class="p">(</span><span class="n">viewer</span><span class="p">)</span>
 </pre></div>
@@ -404,7 +412,10 @@ range: (0.0, 1.0)
 <p>We saw the <a class="reference external" href="https://en.wikipedia.org/wiki/Sobel_operator">Sobel operator</a> in the filters lesson. It is an edge detection algorithm that approximates the gradient of the image intensity, and is fast to compute. The <a class="reference external" href="https://scikit-image.org/docs/dev/api/skimage.filters.html#skimage.filters.scharr">Scharr filter</a> is a slightly more sophisticated version, with smoothing weights [3, 10, 3]. Both work for n-dimensional images in scikit-image.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">edges</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">scharr</span><span class="p">(</span><span class="n">nuclei</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="n">filters</span>
+
+
+<span class="n">edges</span> <span class="o">=</span> <span class="n">filters</span><span class="o">.</span><span class="n">scharr</span><span class="p">(</span><span class="n">nuclei</span><span class="p">)</span>
 
 <span class="n">nuclei_layer</span> <span class="o">=</span> <span class="n">viewer</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="s1">&#39;nuclei&#39;</span><span class="p">]</span>
 <span class="n">nuclei_layer</span><span class="o">.</span><span class="n">blending</span> <span class="o">=</span> <span class="s1">&#39;additive&#39;</span>
@@ -420,7 +431,7 @@ range: (0.0, 1.0)
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Image layer &#39;edges&#39; at 0x7fa2b239f790&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Image layer &#39;edges&#39; at 0x7f97c34556d0&gt;
 </pre></div>
 </div>
 </div>
@@ -430,6 +441,11 @@ range: (0.0, 1.0)
 <img alt="../_images/2_segmentation_and_regionprops_16_0.png" src="../_images/2_segmentation_and_regionprops_16_0.png" />
 </div>
 </div>
+</div>
+<div class="section" id="thresholding">
+<h2>Thresholding<a class="headerlink" href="#thresholding" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="https://en.wikipedia.org/wiki/Thresholding_%28image_processing%29">Thresholding</a> is used to create binary images. A threshold value determines the intensity value separating foreground pixels from background pixels. Foregound pixels are pixels brighter than the threshold value, background pixels are darker. In many cases, images can be adequately segmented by thresholding followed by labelling of <em>connected components</em>, which is a fancy way of saying “groups of pixels that touch each other”.</p>
+<p>Different thresholding algorithms produce different results. <a class="reference external" href="https://en.wikipedia.org/wiki/Otsu%27s_method">Otsu’s method</a> and <a class="reference external" href="https://scikit-image.org/docs/dev/auto_examples/developers/plot_threshold_li.html">Li’s minimum cross entropy threshold</a> are two common algorithms. Below, we use Li. You can use <code class="docutils literal notranslate"><span class="pre">skimage.filters.threshold_&lt;TAB&gt;</span></code> to find different thresholding methods.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">denoised</span> <span class="o">=</span> <span class="n">ndi</span><span class="o">.</span><span class="n">median_filter</span><span class="p">(</span><span class="n">nuclei</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
@@ -437,11 +453,6 @@ range: (0.0, 1.0)
 </div>
 </div>
 </div>
-</div>
-<div class="section" id="thresholding">
-<h2>Thresholding<a class="headerlink" href="#thresholding" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference external" href="https://en.wikipedia.org/wiki/Thresholding_%28image_processing%29">Thresholding</a> is used to create binary images. A threshold value determines the intensity value separating foreground pixels from background pixels. Foregound pixels are pixels brighter than the threshold value, background pixels are darker. In many cases, images can be adequately segmented by thresholding followed by labelling of <em>connected components</em>, which is a fancy way of saying “groups of pixels that touch each other”.</p>
-<p>Different thresholding algorithms produce different results. <a class="reference external" href="https://en.wikipedia.org/wiki/Otsu%27s_method">Otsu’s method</a> and <a class="reference external" href="https://scikit-image.org/docs/dev/auto_examples/developers/plot_threshold_li.html">Li’s minimum cross entropy threshold</a> are two common algorithms. Below, we use Li. You can use <code class="docutils literal notranslate"><span class="pre">skimage.filters.threshold_&lt;TAB&gt;</span></code> to find different thresholding methods.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">li_thresholded</span> <span class="o">=</span> <span class="n">denoised</span> <span class="o">&gt;</span> <span class="n">filters</span><span class="o">.</span><span class="n">threshold_li</span><span class="p">(</span><span class="n">denoised</span><span class="p">)</span>
@@ -460,7 +471,7 @@ range: (0.0, 1.0)
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Image layer &#39;li_thresholded&#39; at 0x7fa2b2e5f730&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Image layer &#39;li_thresholded&#39; at 0x7f97b7b119d0&gt;
 </pre></div>
 </div>
 </div>
@@ -571,15 +582,17 @@ range: (0.0, 1.0)
 
 <span class="n">maxima</span> <span class="o">=</span> <span class="n">morphology</span><span class="o">.</span><span class="n">local_maxima</span><span class="p">(</span><span class="n">transformed</span><span class="p">)</span>
 <span class="n">viewer</span><span class="o">.</span><span class="n">add_points</span><span class="p">(</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">maxima</span><span class="p">))</span> <span class="o">*</span> <span class="n">spacing</span><span class="p">,</span>  <span class="c1"># don&#39;t forget scale</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">maxima</span><span class="p">)),</span>
     <span class="n">name</span><span class="o">=</span><span class="s1">&#39;bad points&#39;</span><span class="p">,</span>
-    <span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">scale</span><span class="o">=</span><span class="n">spacing</span><span class="p">,</span>
+    <span class="n">size</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="n">n_dimensional</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># points have 3D &quot;extent&quot;</span>
 <span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Points layer &#39;bad points&#39; at 0x7fa2b2310490&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Points layer &#39;bad points&#39; at 0x7f97c3455670&gt;
 </pre></div>
 </div>
 </div>
@@ -595,7 +608,19 @@ range: (0.0, 1.0)
 </div>
 </div>
 <p>You can see that these points are actually terrible, with many markers found within each nuclei.</p>
-<p>There are many approaches to find better points, but with napari, in many cases, a little interactivity can quickly get us the segmentation we want.</p>
+<div class="section" id="span-style-color-cornflowerblue-exercise-improve-the-points-span">
+<h3><span style="color:cornflowerblue">Exercise: improve the points</span><a class="headerlink" href="#span-style-color-cornflowerblue-exercise-improve-the-points-span" title="Permalink to this headline">¶</a></h3>
+<p>Try to improve the segmentation to assign one point for each nucleus. Some ideas:</p>
+<ul class="simple">
+<li><p>use a smoothed version of the nuclei image directly</p></li>
+<li><p>smooth the distance map</p></li>
+<li><p>use morphological operations to smooth the surface of the nuclei to ensure that they are close to spherical</p></li>
+<li><p>use peak_local_max with <code class="docutils literal notranslate"><span class="pre">min_distance</span></code> parameter instead of <code class="docutils literal notranslate"><span class="pre">morphology.local_maxima</span></code></p></li>
+<li><p>find points on a single plane, then prepend the plane index to the found coordinates</p></li>
+</ul>
+<p>As you will have seen from the previous exercise, there are many approaches to find better seed points, but they are often fiddly and tedious, and sensitive to parameters — when you encounter a new image, you might have to start all over again!</p>
+<p>With napari, in many cases, a little interactivity, combined with the segmentation algorithms in scikit-image and elsewhere, can quickly get us the segmentation we want.</p>
+<p>Below, you can use full manual annotation, or light editing of the points you found automatically.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">viewer</span><span class="o">.</span><span class="n">layers</span><span class="p">[</span><span class="s1">&#39;bad points&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">visible</span> <span class="o">=</span> <span class="kc">False</span>
@@ -604,8 +629,10 @@ range: (0.0, 1.0)
 
 <span class="n">points</span> <span class="o">=</span> <span class="n">viewer</span><span class="o">.</span><span class="n">add_points</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s1">&#39;interactive points&#39;</span><span class="p">,</span>
+    <span class="n">scale</span><span class="o">=</span><span class="n">spacing</span><span class="p">,</span>
     <span class="n">ndim</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
-    <span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">size</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="n">n_dimensional</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">points</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;add&#39;</span>
 
@@ -617,36 +644,7 @@ range: (0.0, 1.0)
 </div>
 <div class="cell tag_remove-input docutils container">
 <div class="cell_output docutils container">
-<img alt="../_images/2_segmentation_and_regionprops_39_0.png" src="../_images/2_segmentation_and_regionprops_39_0.png" />
-</div>
-</div>
-<div class="cell tag_hide-input docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># scaled points.data</span>
-
-<span class="n">points</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-      <span class="p">[[</span> <span class="mf">8.7</span>       <span class="p">,</span>  <span class="mf">3.10175426</span><span class="p">,</span>  <span class="mf">7.22127134</span><span class="p">],</span>
-       <span class="p">[</span> <span class="mf">8.7</span>       <span class="p">,</span>  <span class="mf">8.31173204</span><span class="p">,</span> <span class="mf">21.63958194</span><span class="p">],</span>
-       <span class="p">[</span> <span class="mf">8.7</span>       <span class="p">,</span>  <span class="mf">2.85942971</span><span class="p">,</span> <span class="mf">38.48113801</span><span class="p">],</span>
-       <span class="p">[</span> <span class="mf">8.7</span>       <span class="p">,</span> <span class="mf">11.34078889</span><span class="p">,</span> <span class="mf">46.23552354</span><span class="p">],</span>
-       <span class="p">[</span> <span class="mf">8.7</span>       <span class="p">,</span> <span class="mf">12.06776253</span><span class="p">,</span> <span class="mf">58.83640003</span><span class="p">],</span>
-       <span class="p">[</span> <span class="mf">8.7</span>       <span class="p">,</span> <span class="mf">18.97401214</span><span class="p">,</span> <span class="mf">29.39396747</span><span class="p">],</span>
-       <span class="p">[</span> <span class="mf">8.7</span>       <span class="p">,</span> <span class="mf">25.03212584</span><span class="p">,</span> <span class="mf">42.11600623</span><span class="p">],</span>
-       <span class="p">[</span> <span class="mf">8.7</span>       <span class="p">,</span> <span class="mf">25.03212584</span><span class="p">,</span> <span class="mf">64.89451373</span><span class="p">],</span>
-       <span class="p">[</span> <span class="mf">8.7</span>       <span class="p">,</span> <span class="mf">36.30021731</span><span class="p">,</span> <span class="mf">62.10778143</span><span class="p">],</span>
-       <span class="p">[</span> <span class="mf">8.7</span>       <span class="p">,</span> <span class="mf">36.17905504</span><span class="p">,</span> <span class="mf">48.90109357</span><span class="p">],</span>
-       <span class="p">[</span> <span class="mf">8.7</span>       <span class="p">,</span> <span class="mf">41.63135737</span><span class="p">,</span> <span class="mf">27.09188426</span><span class="p">],</span>
-       <span class="p">[</span> <span class="mf">8.7</span>       <span class="p">,</span> <span class="mf">22.85120491</span><span class="p">,</span> <span class="mf">13.52170958</span><span class="p">],</span>
-       <span class="p">[</span> <span class="mf">8.7</span>       <span class="p">,</span> <span class="mf">35.57324367</span><span class="p">,</span> <span class="mf">11.21962638</span><span class="p">],</span>
-       <span class="p">[</span> <span class="mf">8.7</span>       <span class="p">,</span> <span class="mf">49.99155427</span><span class="p">,</span> <span class="mf">12.79473594</span><span class="p">],</span>
-       <span class="p">[</span> <span class="mf">8.7</span>       <span class="p">,</span> <span class="mf">57.38245298</span><span class="p">,</span> <span class="mf">20.06447238</span><span class="p">],</span>
-       <span class="p">[</span> <span class="mf">8.7</span>       <span class="p">,</span> <span class="mf">61.98661939</span><span class="p">,</span> <span class="mf">36.78486618</span><span class="p">],</span>
-       <span class="p">[</span> <span class="mf">8.7</span>       <span class="p">,</span> <span class="mf">53.98990931</span><span class="p">,</span> <span class="mf">45.62971217</span><span class="p">],</span>
-       <span class="p">[</span> <span class="mf">8.7</span>       <span class="p">,</span> <span class="mf">64.65218941</span><span class="p">,</span> <span class="mf">53.02061088</span><span class="p">],</span>
-       <span class="p">[</span> <span class="mf">8.7</span>       <span class="p">,</span> <span class="mf">57.50361525</span><span class="p">,</span> <span class="mf">63.44056644</span><span class="p">]],</span>
-<span class="p">)</span>
-</pre></div>
-</div>
+<img alt="../_images/2_segmentation_and_regionprops_42_0.png" src="../_images/2_segmentation_and_regionprops_42_0.png" />
 </div>
 </div>
 <div class="cell tag_hide-cell tag_remove-input tag_remove-output docutils container">
@@ -656,7 +654,7 @@ range: (0.0, 1.0)
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="n">segmentation</span>
 
-<span class="n">marker_locations</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">data</span> <span class="o">/</span> <span class="n">spacing</span>
+<span class="n">marker_locations</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">data</span>
 
 <span class="n">markers</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nuclei</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint32</span><span class="p">)</span>
 <span class="n">marker_indices</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">marker_locations</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
@@ -681,10 +679,11 @@ range: (0.0, 1.0)
 </div>
 <div class="cell tag_remove-input docutils container">
 <div class="cell_output docutils container">
-<img alt="../_images/2_segmentation_and_regionprops_44_0.png" src="../_images/2_segmentation_and_regionprops_44_0.png" />
+<img alt="../_images/2_segmentation_and_regionprops_46_0.png" src="../_images/2_segmentation_and_regionprops_46_0.png" />
 </div>
 </div>
 <p>After watershed, we have better disambiguation between internal cells!</p>
+</div>
 </div>
 <div class="section" id="making-measurements">
 <h2>Making measurements<a class="headerlink" href="#making-measurements" title="Permalink to this headline">¶</a></h2>
@@ -711,7 +710,7 @@ range: (0.0, 1.0)
 </div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">skimage.measure.regionprops</span></code> automatically measures many labeled image features. Optionally, an <code class="docutils literal notranslate"><span class="pre">intensity_image</span></code> can be supplied and intensity features are extracted per object. It’s good practice to make measurements on the original image.</p>
-<p>Not all properties are supported for 3D data. Below are lists of supported and unsupported 3D measurements.</p>
+<p>Not all properties are supported for 3D data. Below we build a list of supported and unsupported 3D measurements.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">regionprops</span> <span class="o">=</span> <span class="n">measure</span><span class="o">.</span><span class="n">regionprops</span><span class="p">(</span><span class="n">interior_labels</span><span class="p">,</span> <span class="n">intensity_image</span><span class="o">=</span><span class="n">nuclei</span><span class="p">)</span>
@@ -780,6 +779,7 @@ Unsupported properties:
 </div>
 </div>
 </div>
+<p>scikit-image 0.18 adds support for <a class="reference external" href="https://scikit-image.org/docs/dev/api/skimage.measure.html#skimage.measure.regionprops">passing custom functions</a> for region properties as <code class="docutils literal notranslate"><span class="pre">extra_properties</span></code>. After this tutorial, you might want to try it out to <a class="reference external" href="https://github.com/scikit-image/scikit-image/issues/3797#issuecomment-471277056">determine the surface area</a> of the nuclei or cells!</p>
 <p><code class="docutils literal notranslate"><span class="pre">skimage.measure.regionprops</span></code> ignores the 0 label, which represents the background.</p>
 <p><code class="docutils literal notranslate"><span class="pre">regionprops_table</span></code> returns a dictionary of columns compatible with creating a pandas dataframe of properties of the data:</p>
 <div class="cell docutils container">
@@ -860,17 +860,17 @@ Unsupported properties:
     </tr>
     <tr>
       <th>6</th>
-      <td>(slice(19, 51, None), slice(47, 99, None), sli...</td>
-      <td>40504</td>
-      <td>0.185613</td>
-      <td>0.911985</td>
-    </tr>
-    <tr>
-      <th>7</th>
       <td>(slice(19, 54, None), slice(72, 121, None), sl...</td>
       <td>40130</td>
       <td>0.211141</td>
       <td>0.894242</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>(slice(19, 51, None), slice(47, 99, None), sli...</td>
+      <td>40504</td>
+      <td>0.185613</td>
+      <td>0.911985</td>
     </tr>
   </tbody>
 </table>
@@ -886,28 +886,25 @@ Unsupported properties:
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/2_segmentation_and_regionprops_57_0.png" src="../_images/2_segmentation_and_regionprops_57_0.png" />
+<img alt="../_images/2_segmentation_and_regionprops_60_0.png" src="../_images/2_segmentation_and_regionprops_60_0.png" />
 </div>
 </div>
 <p>We can see that the mitotic nucleus is a clear outlier from the others in terms of solidity and intensity.</p>
+<div class="section" id="span-style-color-cornflowerblue-exercise-physical-measurements-span">
+<h3><span style="color:cornflowerblue">Exercise: physical measurements</span><a class="headerlink" href="#span-style-color-cornflowerblue-exercise-physical-measurements-span" title="Permalink to this headline">¶</a></h3>
+<p>The “area” property above is actually the volume of the region, measured in voxels. Add a new column to your dataframe, <code class="docutils literal notranslate"><span class="pre">'area_um3'</span></code>, containing the volume in µm³.</p>
 </div>
-<div class="section" id="challenge-problems">
-<h2>Challenge problems<a class="headerlink" href="#challenge-problems" title="Permalink to this headline">¶</a></h2>
-<p>Put your 3D image processing skills to the test by working through these challenge problems.</p>
-<div class="section" id="improve-the-segmentation">
-<h3>Improve the segmentation<a class="headerlink" href="#improve-the-segmentation" title="Permalink to this headline">¶</a></h3>
-<p>A few objects were oversegmented in the declumping step. Try to improve the segmentation and assign each object a single, unique label. You can try to use <a class="reference external" href="https://scikit-image.org/docs/dev/auto_examples/filters/plot_j_invariant.html">calibrated denoising</a> to get smoother nuclei and membrane images.</p>
+<div class="section" id="span-style-color-cornflowerblue-exercise-full-cell-segmentation-span">
+<h3><span style="color:cornflowerblue">Exercise: full cell segmentation</span><a class="headerlink" href="#span-style-color-cornflowerblue-exercise-full-cell-segmentation-span" title="Permalink to this headline">¶</a></h3>
+<p>Above, we loaded the membranes image into memory, but we have yet to use it.</p>
+<ul class="simple">
+<li><p>Add the membranes to the image.</p></li>
+<li><p>Use watershed to segment the full cells, and add the segmentation to the display</p></li>
+</ul>
 </div>
-<div class="section" id="segment-cell-membranes">
-<h3>Segment cell membranes<a class="headerlink" href="#segment-cell-membranes" title="Permalink to this headline">¶</a></h3>
-<p>Try segmenting the accompanying membrane channel. In the membrane image, the membrane walls are the bright web-like regions. This channel is difficult due to a high amount of noise in the image. Additionally, it can be hard to determine where the membrane ends in the image (it’s not the first and last planes).</p>
-<p>Below is a 2D segmentation of the membrane:</p>
-<p><img alt="" src="lectures/../_images/membrane_segmentation.png" /></p>
-<p>Hint: there should only be one nucleus per membrane.</p>
-</div>
-<div class="section" id="measure-the-area-in-m3-of-the-cells">
-<h3>Measure the area in µm³ of the cells<a class="headerlink" href="#measure-the-area-in-m3-of-the-cells" title="Permalink to this headline">¶</a></h3>
-<p>Once you have segmented the cell membranes, use regionprops to measure the distribution of cell areas.</p>
+<div class="section" id="span-style-color-cornflowerblue-exercise-displaying-regionprops-or-other-values-span">
+<h3><span style="color:cornflowerblue">Exercise: displaying regionprops (or other values)</span><a class="headerlink" href="#span-style-color-cornflowerblue-exercise-displaying-regionprops-or-other-values-span" title="Permalink to this headline">¶</a></h3>
+<p>Now that you have segmented cells, (or even with just the nuclei), use <a class="reference external" href="https://scikit-image.org/docs/dev/api/skimage.util.html#skimage.util.map_array"><code class="docutils literal notranslate"><span class="pre">skimage.util.map_array</span></code></a> to display a volume of the value of a regionprop (say, ‘solidity’ of the cells) on top of the segments.</p>
 </div>
 </div>
 </div>

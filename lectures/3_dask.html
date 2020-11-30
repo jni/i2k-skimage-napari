@@ -59,7 +59,6 @@
     <script async="async" src="../_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="discussion" href="4_discussion.html" />
     <link rel="prev" title="Segmentation" href="2_segmentation_and_regionprops.html" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -111,11 +110,6 @@
  <li class="toctree-l1 current active">
   <a class="current reference internal" href="#">
    out-of-core image analysis with dask
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="4_discussion.html">
-   discussion
   </a>
  </li>
 </ul>
@@ -200,6 +194,53 @@
     <!-- Table of contents -->
     <div class="d-none d-md-block col-md-2 bd-toc show">
         
+        <div class="tocsection onthispage pt-5 pb-3">
+            <i class="fas fa-list"></i> Contents
+        </div>
+        <nav id="bd-toc-nav">
+            <ul class="nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#dask-distributed">
+   dask.distributed
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#now-with-real-images">
+   Now with real images
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#span-style-color-cornflowerblue-exercise-file-formats-span">
+     <span style="color:cornflowerblue">
+      Exercise: file formats
+     </span>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#adding-the-tracking-data">
+   Adding the tracking data
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#challenge">
+   Challenge
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#span-style-color-cornflowerblue-final-challenge-distributed-segmentation-with-dask-span">
+     <span style="color:cornflowerblue">
+      Final challenge: distributed segmentation with dask
+     </span>
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+        </nav>
+        
     </div>
 </div>
     <div id="main-content" class="row">
@@ -226,14 +267,14 @@
 </div>
 <div class="cell tag_remove-input tag_remove-output docutils container">
 </div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dask.array</span> <span class="k">as</span> <span class="nn">da</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>(Note: in the first pass, don’t call the next cell. Then we will rerun the notebook, seeing the benefits of these cells.)</p>
+<div class="section" id="dask-distributed">
+<h2>dask.distributed<a class="headerlink" href="#dask-distributed" title="Permalink to this headline">¶</a></h2>
+<p>A first life hack: in general, avoid using bare dask, and instead create a <code class="docutils literal notranslate"><span class="pre">dask.distributed</span></code> Client as in the cell below. What this buys you:</p>
+<ul class="simple">
+<li><p>memory management: the distributed scheduler that is automatically created with the default client will launch processes with maximum memory limits. If they exceed those limits, the scheduler will stop sending tasks to them and eventually kill them. In contrast, without <code class="docutils literal notranslate"><span class="pre">distributed</span></code>, you are subject to the same issues as bare Python. It is very easy to freeze your machine.</p></li>
+<li><p>a <a class="reference external" href="https://docs.dask.org/en/latest/diagnostics-distributed.html">diagnostics dashboard</a>. This can be invaluable in helping to understand performance in your application. We’ll see a live example below.</p></li>
+<li><p>seamless scaling. Whether the scheduler is using local workers or connected to <a class="reference external" href="https://jobqueue.dask.org/en/latest/">your institution’s HPC</a>, or <a class="reference external" href="https://docs.dask.org/en/latest/setup/cloud.html">cloud compute</a>, the API is the same — you just change the scheduler and connect the Client to it.</p></li>
+</ul>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dask</span> <span class="kn">import</span> <span class="n">distributed</span>
@@ -250,7 +291,9 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">random_image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="mi">512</span><span class="p">,</span> <span class="mi">512</span><span class="p">))</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">random_image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="mi">512</span><span class="p">,</span> <span class="mi">512</span><span class="p">))</span>
 
 <span class="kn">import</span> <span class="nn">napari</span>
 
@@ -259,16 +302,20 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;napari.viewer.Viewer at 0x7fb760992910&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;napari.viewer.Viewer at 0x7f9ce3e93fd0&gt;
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">impossible_image</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(</span>
-    <span class="p">(</span><span class="mi">20_000</span><span class="p">,</span> <span class="mi">8_000</span><span class="p">,</span> <span class="mi">8_000</span><span class="p">),</span>
-    <span class="n">chunks</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4_000</span><span class="p">,</span> <span class="mi">4_000</span><span class="p">),</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dask.array</span> <span class="k">as</span> <span class="nn">da</span>
+
+<span class="c1"># yes we know Janelia has workstations with TB of RAM</span>
+<span class="c1"># We ignore them for variable naming purposes. =P</span>
+<span class="n">impossible_image</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(</span>
+    <span class="p">(</span><span class="mi">40_000</span><span class="p">,</span> <span class="mi">2_000</span><span class="p">,</span> <span class="mi">2_000</span><span class="p">),</span>
+    <span class="n">chunks</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1_000</span><span class="p">,</span> <span class="mi">1_000</span><span class="p">),</span>
 <span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">impossible_image</span><span class="o">.</span><span class="n">nbytes</span> <span class="o">/</span> <span class="mf">1e9</span><span class="p">)</span>
@@ -276,7 +323,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>10240.0
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1280.0
 </pre></div>
 </div>
 </div>
@@ -288,11 +335,24 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;napari.viewer.Viewer at 0x7fb7471ecf70&gt;
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;napari.viewer.Viewer at 0x7f9c89c2d3d0&gt;
 </pre></div>
 </div>
 </div>
 </div>
+</div>
+<div class="section" id="now-with-real-images">
+<h2>Now with real images<a class="headerlink" href="#now-with-real-images" title="Permalink to this headline">¶</a></h2>
+<p>We use data from the <a class="reference external" href="http://celltrackingchallenge.net/3d-datasets/">Cell Tracking Challenge</a>,
+specifically:</p>
+<ul class="simple">
+<li><p>the <a class="reference external" href="http://data.celltrackingchallenge.net/training-datasets/Fluo-N3DH-CE.zip">C. elegans developing embryo training
+dataset</a>
+(3GB), <strong>OR</strong>, if that is too large for you to comfortably download,</p></li>
+<li><p>the <a class="reference external" href="http://data.celltrackingchallenge.net/training-datasets/Fluo-N3DH-CHO.zip">Chinese Hamster Ovarian (CHO) nuclei overexpressing GFP-PCNA training
+dataset</a>
+(98MB)</p></li>
+</ul>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dask_image.imread</span> <span class="kn">import</span> <span class="n">imread</span>
@@ -302,7 +362,14 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">embryo</span> <span class="o">=</span> <span class="n">imread</span><span class="p">(</span><span class="s1">&#39;/Users/jni/data/Fluo-N3DH-CE/01/t*.tif&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ROOT_PATH</span> <span class="o">=</span> <span class="s1">&#39;/Users/jni/data/Fluo-N3DH-CE/&#39;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">embryo</span> <span class="o">=</span> <span class="n">imread</span><span class="p">(</span><span class="n">ROOT_PATH</span> <span class="o">+</span> <span class="s1">&#39;01/t*.tif&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -367,6 +434,7 @@
 </div>
 </div>
 </div>
+<p>Note: below, you might want to subsample the embryo with <code class="docutils literal notranslate"><span class="pre">embryo[:,</span> <span class="pre">:,</span> <span class="pre">::2,</span> <span class="pre">::2]</span></code> (correspondingly adjusting the scale), if you run into <a class="reference external" href="https://github.com/napari/napari/issues/1507">this issue with ghosting</a>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">viewer</span> <span class="o">=</span> <span class="n">napari</span><span class="o">.</span><span class="n">view_image</span><span class="p">(</span>
@@ -377,13 +445,123 @@
 </div>
 </div>
 </div>
+<div class="section" id="span-style-color-cornflowerblue-exercise-file-formats-span">
+<h3><span style="color:cornflowerblue">Exercise: file formats</span><a class="headerlink" href="#span-style-color-cornflowerblue-exercise-file-formats-span" title="Permalink to this headline">¶</a></h3>
+<p>Open the dask dashboard, and view it while changing timepoints in napari. How long does loading a tiff file take?</p>
+<p>If you have enough room in your drive, the <a class="reference external" href="https://zarr.readthedocs.io/en/stable/">zarr</a> format offers much faster read from disk than tiff, especially for segmentations, which have very effective compression.</p>
+<p>Use <code class="docutils literal notranslate"><span class="pre">dask.Array.to_zarr</span></code> to save to a zarr file, and reload the array with <code class="docutils literal notranslate"><span class="pre">dask.array.from_zarr</span></code>. Swap out the image layer for the zarr-based one. How long does the load take now?</p>
+<p>You might want to check out the NGFF tutorial, too!</p>
+</div>
+</div>
+<div class="section" id="adding-the-tracking-data">
+<h2>Adding the tracking data<a class="headerlink" href="#adding-the-tracking-data" title="Permalink to this headline">¶</a></h2>
+<p>Now, let’s view the tracking data. The track format is described in <a class="reference external" href="https://public.celltrackingchallenge.net/documents/Naming%20and%20file%20content%20conventions.pdf">this pdf</a>. You can also see a description of the below workflow without dask (ie it <em>must</em> fit in your RAM) at <a class="reference external" href="https://napari.org/tutorials/applications/cell_tracking">this napari documentation page</a>.</p>
+<p>The tracklets are actually individually-labelled pixels within a volume like the original image. napari prefers to display tracks directly from coordinates, so we will use dask to convert from one to the other.</p>
+<p>We are lucky: the images can be processed one at a time (which dask is perfect for), and the compressed data (just point coordinates) are much, much smaller — easy to fit in RAM. We take advantage of this in the below workflow.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">dask</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tracklet_images</span> <span class="o">=</span> <span class="n">imread</span><span class="p">(</span><span class="n">ROOT_PATH</span> <span class="o">+</span> <span class="s1">&#39;01_GT/TRA/man_track*.tif&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
+<p>First, we define a function that will work on an individual volume, together with that volume’s index (ie the timepoint).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">skimage.measure</span> <span class="kn">import</span> <span class="n">regionprops_table</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+
+<span class="k">def</span> <span class="nf">image_to_tracklets</span><span class="p">(</span><span class="n">volume</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+    <span class="n">props_dict</span> <span class="o">=</span> <span class="n">regionprops_table</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">volume</span><span class="p">),</span> <span class="n">properties</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;label&#39;</span><span class="p">,</span> <span class="s1">&#39;centroid&#39;</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">props_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">props_dict</span><span class="p">)</span>
+    <span class="n">props_df</span><span class="p">[</span><span class="s1">&#39;frame&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">idx</span>
+    <span class="k">return</span> <span class="n">props_df</span><span class="p">[</span>
+        <span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">,</span> <span class="s1">&#39;frame&#39;</span><span class="p">,</span> <span class="s1">&#39;centroid-0&#39;</span><span class="p">,</span> <span class="s1">&#39;centroid-1&#39;</span><span class="p">,</span> <span class="s1">&#39;centroid-2&#39;</span><span class="p">]</span>
+    <span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now we can run that function on the whole volume using the <code class="docutils literal notranslate"><span class="pre">Client.map</span></code> API. Futures are little IOUs for computation: a Future may or may not contain the result of the computation. Calling <code class="docutils literal notranslate"><span class="pre">future.result()</span></code> on a Future object causes Python to wait for that result to be ready. Otherwise, creating a Future is more or less instantaneous.</p>
+<p>We will see later that futures have a <code class="docutils literal notranslate"><span class="pre">.cancel()</span></code> method — useful when you trigger a lot of computation but realise you want to stop it!</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">futures</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
+    <span class="n">image_to_tracklets</span><span class="p">,</span>
+    <span class="n">tracklet_images</span><span class="p">,</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tracklet_images</span><span class="p">)),</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">all_tables</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">result</span><span class="p">()</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">futures</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tracklets</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">all_tables</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s1">&#39;label&#39;</span><span class="p">,</span> <span class="s1">&#39;frame&#39;</span><span class="p">])</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tracklets_layer</span> <span class="o">=</span> <span class="n">viewer</span><span class="o">.</span><span class="n">add_tracks</span><span class="p">(</span><span class="n">tracklets</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We want to also load the lineage information, which is presented in a table called <code class="docutils literal notranslate"><span class="pre">man_track.txt</span></code>, containing the following four columns, called LBEP:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>L - a unique label of the track (label of markers, 16-bit positive value)</p></li>
+<li><p>B - a zero-based temporal index of the frame in which the track begins</p></li>
+<li><p>E - a zero-based temporal index of the frame in which the track ends</p></li>
+<li><p>P - label of the parent track (0 is used when no parent is defined)</p></li>
+</ul>
+</div></blockquote>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lbep</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span>
+    <span class="n">ROOT_PATH</span> <span class="o">+</span> <span class="s1">&#39;01_GT/TRA/man_track.txt&#39;</span><span class="p">,</span>
+    <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">full_graph</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">lbep</span><span class="p">[:,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">]])</span>
+<span class="n">graph</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">full_graph</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tracks_layer</span> <span class="o">=</span> <span class="n">viewer</span><span class="o">.</span><span class="n">add_tracks</span><span class="p">(</span><span class="n">tracklets</span><span class="p">,</span> <span class="n">graph</span><span class="o">=</span><span class="n">graph</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="challenge">
+<h2>Challenge<a class="headerlink" href="#challenge" title="Permalink to this headline">¶</a></h2>
+<p>Our final goal will be to compute a segmentation from the grayscale image together with the points in the tracks. Just like last time, we will use smoothed and thresholded nuclei as a mask, and we will use the track points (conveniently already in marker image format!) to run watershed on each.</p>
+<p>We can use the <code class="docutils literal notranslate"><span class="pre">dask-image</span></code> library, which contains many functions adapted from <code class="docutils literal notranslate"><span class="pre">scipy.ndimage</span></code>, to do the smoothing:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dask_image</span> <span class="kn">import</span> <span class="n">ndfilters</span>
@@ -401,175 +579,28 @@
 </div>
 </div>
 </div>
+<p>And we can use <a class="reference external" href="https://docs.dask.org/en/latest/array-api.html#dask.array.map_blocks"><code class="docutils literal notranslate"><span class="pre">dask.array.map_blocks</span></code></a> to find the edges of the nuclei, just like in the previous notebook:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">skimage.morphology</span> <span class="kn">import</span> <span class="n">h_maxima</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">maxes</span> <span class="o">=</span> <span class="n">dask</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">smoothed</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)))[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># takes a minute or so, check dashboard!</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">maxes</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x7fb694c2cca0&gt;]
-</pre></div>
-</div>
-<img alt="../_images/3_dask_22_1.png" src="../_images/3_dask_22_1.png" />
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">result0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">h_maxima</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">smoothed</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="mi">90</span><span class="p">)))</span>
-<span class="n">result0</span><span class="o">.</span><span class="n">shape</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(4, 3)
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># this function needs dramatic improvement</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="n">filters</span>
 
-<span class="k">def</span> <span class="nf">peaks_from_dask</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">volume</span><span class="p">,</span> <span class="n">min_height</span><span class="o">=</span><span class="mi">90</span><span class="p">):</span>
-    <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">volume</span><span class="p">)</span>
-    <span class="n">maxima</span> <span class="o">=</span> <span class="n">h_maxima</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">min_height</span><span class="p">)</span>
-    <span class="n">coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">maxima</span><span class="p">))</span>
-    <span class="n">ncoord</span> <span class="o">=</span> <span class="n">coords</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
-        <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">ncoord</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">idx</span><span class="p">),</span> <span class="n">coords</span><span class="p">),</span>
-        <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="k">return</span> <span class="n">coords</span>
+
+<span class="n">edges</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">map_blocks</span><span class="p">(</span><span class="n">filters</span><span class="o">.</span><span class="n">scharr</span><span class="p">,</span> <span class="n">smoothed</span><span class="p">)</span>
+
+<span class="n">edges_layer</span> <span class="o">=</span> <span class="n">viewer</span><span class="o">.</span><span class="n">add_image</span><span class="p">(</span><span class="n">edges</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
 </div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">futures</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
-    <span class="n">peaks_from_dask</span><span class="p">,</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">smoothed</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
-    <span class="n">smoothed</span><span class="p">,</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">futures</span><span class="p">:</span>
-    <span class="n">f</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">futures_small</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">peaks_from_dask</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">smoothed</span><span class="p">[:</span><span class="mi">10</span><span class="p">])</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
-    <span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">result</span><span class="p">()</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">futures_small</span><span class="p">],</span>
-    <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>distributed.core - ERROR - &#39;peaks_from_dask-c27135494274ce23c47a80b6d8e242ff&#39;
-Traceback (most recent call last):
-  File &quot;/Users/jni/conda/envs/i2k/lib/python3.8/site-packages/distributed/core.py&quot;, line 597, in handle_stream
-    handler(**merge(extra, msg))
-  File &quot;/Users/jni/conda/envs/i2k/lib/python3.8/site-packages/distributed/scheduler.py&quot;, line 2731, in handle_long_running
-    ts = self.tasks[key]
-KeyError: &#39;peaks_from_dask-c27135494274ce23c47a80b6d8e242ff&#39;
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>distributed.utils - ERROR - &#39;peaks_from_dask-c27135494274ce23c47a80b6d8e242ff&#39;
-Traceback (most recent call last):
-  File &quot;/Users/jni/conda/envs/i2k/lib/python3.8/site-packages/distributed/utils.py&quot;, line 655, in log_errors
-    yield
-  File &quot;/Users/jni/conda/envs/i2k/lib/python3.8/site-packages/distributed/scheduler.py&quot;, line 1813, in add_worker
-    await self.handle_worker(comm=comm, worker=address)
-  File &quot;/Users/jni/conda/envs/i2k/lib/python3.8/site-packages/distributed/scheduler.py&quot;, line 2770, in handle_worker
-    await self.handle_stream(comm=comm, extra={&quot;worker&quot;: worker})
-  File &quot;/Users/jni/conda/envs/i2k/lib/python3.8/site-packages/distributed/core.py&quot;, line 597, in handle_stream
-    handler(**merge(extra, msg))
-  File &quot;/Users/jni/conda/envs/i2k/lib/python3.8/site-packages/distributed/scheduler.py&quot;, line 2731, in handle_long_running
-    ts = self.tasks[key]
-KeyError: &#39;peaks_from_dask-c27135494274ce23c47a80b6d8e242ff&#39;
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>distributed.core - ERROR - &#39;peaks_from_dask-c27135494274ce23c47a80b6d8e242ff&#39;
-Traceback (most recent call last):
-  File &quot;/Users/jni/conda/envs/i2k/lib/python3.8/site-packages/distributed/core.py&quot;, line 528, in handle_comm
-    result = await result
-  File &quot;/Users/jni/conda/envs/i2k/lib/python3.8/site-packages/distributed/scheduler.py&quot;, line 1813, in add_worker
-    await self.handle_worker(comm=comm, worker=address)
-  File &quot;/Users/jni/conda/envs/i2k/lib/python3.8/site-packages/distributed/scheduler.py&quot;, line 2770, in handle_worker
-    await self.handle_stream(comm=comm, extra={&quot;worker&quot;: worker})
-  File &quot;/Users/jni/conda/envs/i2k/lib/python3.8/site-packages/distributed/core.py&quot;, line 597, in handle_stream
-    handler(**merge(extra, msg))
-  File &quot;/Users/jni/conda/envs/i2k/lib/python3.8/site-packages/distributed/scheduler.py&quot;, line 2731, in handle_long_running
-    ts = self.tasks[key]
-KeyError: &#39;peaks_from_dask-c27135494274ce23c47a80b6d8e242ff&#39;
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">viewer</span><span class="o">.</span><span class="n">add_points</span><span class="p">(</span>
-    <span class="n">coords</span> <span class="o">*</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
-    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;coords&#39;</span><span class="p">,</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;Points layer &#39;coords&#39; at 0x7fb699283880&gt;
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">coords</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[  0,  16, 142, 382],
-       [  0,  16, 142, 383],
-       [  0,  16, 142, 384],
-       [  0,  16, 142, 385],
-       [  3,  16, 385, 359],
-       [  3,  16, 385, 360],
-       [  3,  16, 385, 361],
-       [  3,  16, 385, 362],
-       [  3,  16, 385, 363],
-       [  3,  16, 385, 364]])
-</pre></div>
-</div>
+<div class="section" id="span-style-color-cornflowerblue-final-challenge-distributed-segmentation-with-dask-span">
+<h3><span style="color:cornflowerblue">Final challenge: distributed segmentation with dask</span><a class="headerlink" href="#span-style-color-cornflowerblue-final-challenge-distributed-segmentation-with-dask-span" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Find threshold values for each timepoint of the smoothed data using <code class="docutils literal notranslate"><span class="pre">client.map</span></code> and a scikit-image thresholding function from <code class="docutils literal notranslate"><span class="pre">skimage.filters</span></code>. Create an array of the thresholding values</p></li>
+<li><p>Using <a class="reference external" href="https://numpy.org/doc/stable/user/basics.broadcasting.html">NumPy broadcasting</a>, produce a Dask array containing the thresholded smooth values. Add this array to napari.</p></li>
+<li><p>(Optionally) use <a class="reference external" href="https://docs.dask.org/en/latest/array-api.html#dask.array.map_blocks"><code class="docutils literal notranslate"><span class="pre">da.map_blocks</span></code></a> with a custom filter function to find better boundaries of the nuclei. Add this array to napari.</p></li>
+<li><p>Use <a class="reference external" href="https://docs.dask.org/en/latest/array-api.html#dask.array.map_blocks"><code class="docutils literal notranslate"><span class="pre">da.map_blocks</span></code></a> together with <code class="docutils literal notranslate"><span class="pre">skimage.segmentation.watershed</span></code> and the three previous arrays to create the output segmentation. Add this array as labels to napari.</p></li>
+<li><p>Navigate the volume by clicking on the slider, and monitor the Dask dashboard.</p></li>
+</ul>
 </div>
 </div>
 </div>
@@ -603,7 +634,6 @@ KeyError: &#39;peaks_from_dask-c27135494274ce23c47a80b6d8e242ff&#39;
     <div class='prev-next-bottom'>
         
     <a class='left-prev' id="prev-link" href="2_segmentation_and_regionprops.html" title="previous page">Segmentation</a>
-    <a class='right-next' id="next-link" href="4_discussion.html" title="next page">discussion</a>
 
     </div>
     <footer class="footer mt-5 mt-md-0">
